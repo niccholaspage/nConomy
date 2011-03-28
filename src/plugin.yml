@@ -1,0 +1,10 @@
+name: nConomy
+
+main: com.niccholaspage.nConomy.nConomy
+
+version: 0.1
+
+commands:
+  ncon:
+    description:
+    usage:

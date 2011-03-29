@@ -15,6 +15,7 @@ public class PayCommand implements CommandExecutor {
 	}
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 		Player player = (Player) sender;
+		if (!(plugin.Permissions.has(player, "nConomy.pay"))) return true;
 		if (args.length < 3){
 			player.sendMessage(ChatColor.RED + "/ncon pay name amount");
 			return false;

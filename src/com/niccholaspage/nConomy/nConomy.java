@@ -7,16 +7,20 @@ import java.io.FileWriter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 import com.niccholaspage.nConomy.commands.*;
+import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class nConomy extends JavaPlugin {
 	public Integer itemID;
 	public Integer value;
 	public String currencyName;
+	public PermissionHandler Permissions;
     @Override
 	public void onDisable() {
 		System.out.println("nConomy Disabled");
@@ -26,6 +30,8 @@ public class nConomy extends JavaPlugin {
 	public void onEnable() {
        //Get the infomation from the yml file.
         PluginDescriptionFile pdfFile = this.getDescription();
+        //Setup Permissions
+        setupPermissions();
         //Register commands
         registerCommands();
         //Read Config
@@ -38,6 +44,17 @@ public class nConomy extends JavaPlugin {
     	CommandHandler commandHandler = new CommandHandler(this);
     	getCommand("ncon").setExecutor(commandHandler);
     	commandHandler.registerExecutor("pay", new PayCommand(this));
+    }
+    private void setupPermissions(){
+        Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
+
+        if (this.Permissions == null) {
+            if (test != null) {
+                this.Permissions = ((Permissions)test).getHandler();
+            } else {
+            	System.out.println("Permissions not detected, Sign shops can only be created by OPs.");
+            }
+        }
     }
     public Player getPlayerStartsWith(String startsWith){
     	if (getServer().getOnlinePlayers().length == 0){

@@ -25,10 +25,12 @@ public class CommandHandler implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		if (args.length < 1){
+			if (plugin.Permissions.has(player, "nConomy.money")){
 			if (plugin.getMoney(player) == 0){
 				player.sendMessage(ChatColor.GREEN + "You have no " + plugin.currencyName + ".");
 			}else{
 				player.sendMessage(ChatColor.GREEN + "You have " + plugin.getMoney(player) + " " + plugin.currencyName + ".");
+			}
 			}
 			return true;
 		}

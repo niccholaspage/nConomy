@@ -103,6 +103,11 @@ public class nConomy extends JavaPlugin {
     	player.updateInventory();
     	return true;
     }
+    public boolean setMoney(Player player, Integer amount){
+    	if (canAddorDelete(amount) == false) return false;
+    	removeMoney(player, getMoney(player));
+    	if (addMoney(player, amount) == false) return false; else return true;
+    }
     @SuppressWarnings("deprecation")
 	public boolean addMoney(Player player, Integer amount){
     	if (!(amount%value == 0)) return false;

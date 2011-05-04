@@ -8,6 +8,7 @@ public class Bank {
 	public int itemID;
 	public int value;
 	public String currencyName;
+	public nConomy plugin;
 	
     public Integer getMoney(Player player){
     	ItemStack[] items = player.getInventory().getContents();
@@ -22,28 +23,44 @@ public class Bank {
     	return money * value;
     }
     @SuppressWarnings("deprecation")
-	public boolean removeMoney(Player player, Integer amount){
+	public boolean removeMoney(String name, Integer amount){
+    	Player player = plugin.getServer().getPlayer(name);
+    	if (player != null){
     	if (!(getMoney(player)%amount == 0)) return false;
     	if (getMoney(player) == 0) return false;
     	ItemStack item = new ItemStack(itemID, amount/value);
     	player.getInventory().removeItem(item);
     	player.updateInventory();
+    	}else {
+    		plugin.fileHandler.writeLine("removemoney," + name + "," + amount);
+    	}
     	return true;
     }
-    public boolean setMoney(Player player, Integer amount){
+    public boolean setMoney(String name, Integer amount){
     	if (canAddorDelete(amount) == false) return false;
-    	removeMoney(player, getMoney(player));
-    	if (addMoney(player, amount) == false) return false; else return true;
+    	Player player = plugin.getServer().getPlayer(name);
+    	if (player != null){
+    		removeMoney(name, getMoney(player));
+    		return addMoney(name, amount);
+    	}else {
+    		plugin.fileHandler.writeLine("setmoney," + name + "," + amount);
+    		return true;
+    	}
     }
     @SuppressWarnings("deprecation")
-	public boolean addMoney(Player player, Integer amount){
-    	if (!(amount%value == 0)) return false;
+	public boolean addMoney(String name, Integer amount){
+    	if (canAddorDelete(amount) == false) return false;
     	ItemStack item = new ItemStack(itemID, amount/value);
+    	Player player = plugin.getServer().getPlayer(name);
+    	if (player != null){
     	player.getInventory().addItem(item);
     	player.updateInventory();
+    	}else {
+    		plugin.fileHandler.writeLine("addmoney," + name + "," + amount);
+    	}
     	return true;
     }
     public boolean canAddorDelete(Integer amount){
-    	if (amount%value == 0) return true; else return false;
+    	return (amount%value == 0);
     }
 }

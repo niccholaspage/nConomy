@@ -3,9 +3,15 @@ package com.niccholaspage.nConomy;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
+
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
@@ -15,9 +21,12 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class nConomy extends JavaPlugin {
 	public PermissionHandler Permissions;
+	public FileHandler fileHandler = new FileHandler("plugins/nConomy/offlinetrans.txt");
 	public static Bank bank = new Bank();
+	private final nConomyPlayerListener playerListener = new nConomyPlayerListener(this);
     @Override
 	public void onDisable() {
+    	fileHandler.close();
 		System.out.println("nConomy Disabled");
 		
 	}
@@ -29,11 +38,18 @@ public class nConomy extends JavaPlugin {
         setupPermissions();
         //Register commands
         registerCommands();
+        //Register events
+        registerEvents();
         //Read Config
         readConfig();
         //Print that the plugin has been enabled!
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
 	}
+    
+    private void registerEvents(){
+    	PluginManager pm = getServer().getPluginManager();
+    	pm.registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Event.Priority.Normal, this);
+    }
     public static Bank getBank(){
     	return bank;
     }
@@ -93,8 +109,29 @@ public class nConomy extends JavaPlugin {
     	}
     	Configuration _config = new Configuration(file);
     	_config.load();
+    	bank.plugin = this;
     	bank.itemID = _config.getInt("nConomy.item", 266);
     	bank.value = _config.getInt("nConomy.value", 5);
     	bank.currencyName = _config.getString("nConomy.currencyname", "bucks");
     }
+}
+
+class nConomyPlayerListener extends PlayerListener {
+	public nConomy plugin;
+	public nConomyPlayerListener(nConomy plugin){
+		this.plugin = plugin;
+	}
+	
+	public void onPlayerLogin(PlayerLoginEvent event){
+		List<String> data = plugin.fileHandler.filetoarray();
+		Player player = event.getPlayer();
+		for (int i = 0; i < data.size(); i++){
+			String[] split = data.get(i).split(",");
+			if (player.getName().equalsIgnoreCase(split[1])){
+				if (split[0] == "removemoney") nConomy.getBank().removeMoney(player.getName(), Integer.parseInt(split[2]));
+				if (split[0] == "addmoney") nConomy.getBank().addMoney(player.getName(), Integer.parseInt(split[2]));
+				if (split[0] == "setmoney") nConomy.getBank().setMoney(player.getName(), Integer.parseInt(split[2]));
+			}
+		}
+	}
 }

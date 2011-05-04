@@ -39,8 +39,8 @@ public class PayCommand implements CommandExecutor {
 			return true;
 		}
 		Player giveto = plugin.getPlayerStartsWith(args[1].toLowerCase());
-		nConomy.getBank().removeMoney(player, amount);
-		nConomy.getBank().addMoney(giveto, amount);
+		nConomy.getBank().removeMoney(player.getName(), amount);
+		nConomy.getBank().addMoney(giveto.getName(), amount);
 		player.sendMessage(ChatColor.BLUE + "You paid " + giveto.getName() + " " + amount + " " + nConomy.getBank().currencyName);
 		return true;
 	}

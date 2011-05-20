@@ -3,6 +3,7 @@ package com.niccholaspage.nConomy;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Player;
@@ -56,7 +57,8 @@ public class nConomy extends JavaPlugin {
     private void registerCommands(){
     	CommandHandler commandHandler = new CommandHandler(this);
     	getCommand("ncon").setExecutor(commandHandler);
-    	commandHandler.registerExecutor("pay", new PayCommand(this));
+    	commandHandler.registerExecutor("pay", new PayCommand(this), false);
+    	commandHandler.registerExecutor("deposit", new DepositCommand(this), true);
     }
     private void setupPermissions(){
         Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
@@ -70,9 +72,6 @@ public class nConomy extends JavaPlugin {
         }
     }
     public Player getPlayerStartsWith(String startsWith){
-    	if (getServer().getOnlinePlayers().length == 0){
-    		return null;
-    	}
     	for (int i = 0; i < getServer().getOnlinePlayers().length; i++){
     		if (getServer().getOnlinePlayers()[i].getName().toLowerCase().startsWith(startsWith)){
     			return getServer().getOnlinePlayers()[i];
@@ -129,8 +128,10 @@ class nConomyPlayerListener extends PlayerListener {
 			String[] split = data.get(i).split(",");
 			if (player.getName().equalsIgnoreCase(split[1])){
 				if (split[0] == "removemoney") nConomy.getBank().removeMoney(player.getName(), Integer.parseInt(split[2]));
-				if (split[0] == "addmoney") nConomy.getBank().addMoney(player.getName(), Integer.parseInt(split[2]));
+				if (split[0].equalsIgnoreCase("addmoney")) nConomy.getBank().addMoney(player.getName(), Integer.parseInt(split[2]));
 				if (split[0] == "setmoney") nConomy.getBank().setMoney(player.getName(), Integer.parseInt(split[2]));
+				data.remove(i);
+				plugin.fileHandler.replaceFile((ArrayList<String>)data);
 			}
 		}
 	}

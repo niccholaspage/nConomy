@@ -3,7 +3,6 @@ package com.niccholaspage.nConomy;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Player;
@@ -26,8 +25,7 @@ public class nConomy extends JavaPlugin {
 	public static Bank bank = new Bank();
 	private final nConomyPlayerListener playerListener = new nConomyPlayerListener(this);
     @Override
-	public void onDisable() {
-    	fileHandler.close();
+	public void onDisable(){
 		System.out.println("nConomy Disabled");
 		
 	}
@@ -122,7 +120,7 @@ class nConomyPlayerListener extends PlayerListener {
 	}
 	
 	public void onPlayerLogin(PlayerLoginEvent event){
-		List<String> data = plugin.fileHandler.filetoarray();
+		List<String> data = plugin.fileHandler.getCache();
 		Player player = event.getPlayer();
 		for (int i = 0; i < data.size(); i++){
 			String[] split = data.get(i).split(",");
@@ -131,7 +129,7 @@ class nConomyPlayerListener extends PlayerListener {
 				if (split[0].equalsIgnoreCase("addmoney")) nConomy.getBank().addMoney(player.getName(), Integer.parseInt(split[2]));
 				if (split[0] == "setmoney") nConomy.getBank().setMoney(player.getName(), Integer.parseInt(split[2]));
 				data.remove(i);
-				plugin.fileHandler.replaceFile((ArrayList<String>)data);
+				plugin.fileHandler.writeCacheToFile();
 			}
 		}
 	}

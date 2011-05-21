@@ -8,65 +8,45 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FileHandler {
 	public final String name;
-	private BufferedWriter out;
-	private BufferedReader in;
+	private List<String> cache = new ArrayList<String>();
 	
 	public FileHandler(String name){
 		this.name = name;
-	      try{
-	    	  out = new BufferedWriter(new FileWriter(name,true));
-	    	  in = new BufferedReader(new FileReader(name));
-	      }catch (Exception e){
-	    	  e.printStackTrace();
-	      }
-	}
-	
-	public void close(){
+		String line = "";
 		try {
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			BufferedReader in = new BufferedReader(new FileReader(name));
+			while((line = in.readLine()) != null) {
+				cache.add(line);
+			}
+		  	}catch(FileNotFoundException fN) {
+		  		fN.printStackTrace();
+		  	}catch(IOException e) {
+		  		e.printStackTrace();
+		  	}
 	}
 	
 	public void writeLine(String str){
-		try {
-			out.write(str + "\n");
-			out.close();
-	    	out = new BufferedWriter(new FileWriter(name,true));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void replaceFile(ArrayList<String> data){
-		new File(name).delete();
-		try {
-			for (int i = 0; i < data.size(); i++){
-				out.write(data.get(i) + "\n");
-			}
-			out.close();
-	    	out = new BufferedWriter(new FileWriter(name,true));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		cache.add(str);
 	}
 
-	public ArrayList<String> filetoarray(){
-		  String line = "";
-		  ArrayList<String> data = new ArrayList<String>();
-		  try {
-		   while((line = in.readLine()) != null) {
-		    data.add(line);
-		   }
-		  }catch(FileNotFoundException fN) {
-			  fN.printStackTrace();
-		  }catch(IOException e) {
-			  e.printStackTrace();
-		  }
-		  return data;
+	public List<String> getCache(){
+		return cache;
+	}
+	
+	public void writeCacheToFile(){
+		new File(name).delete();
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(name,true));
+			for (int i = 0; i < cache.size(); i++){
+				out.write(cache.get(i) + "\n");
+			}
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

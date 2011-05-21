@@ -121,13 +121,17 @@ class nConomyPlayerListener extends PlayerListener {
 	
 	public void onPlayerLogin(PlayerLoginEvent event){
 		List<String> data = plugin.fileHandler.getCache();
-		Player player = event.getPlayer();
+		final Player player = event.getPlayer();
 		for (int i = 0; i < data.size(); i++){
-			String[] split = data.get(i).split(",");
+			final String[] split = data.get(i).split(",");
 			if (player.getName().equalsIgnoreCase(split[1])){
-				if (split[0] == "removemoney") nConomy.getBank().removeMoney(player.getName(), Integer.parseInt(split[2]));
-				if (split[0].equalsIgnoreCase("addmoney")) nConomy.getBank().addMoney(player.getName(), Integer.parseInt(split[2]));
-				if (split[0] == "setmoney") nConomy.getBank().setMoney(player.getName(), Integer.parseInt(split[2]));
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+					public void run(){
+						if (split[0] == "removemoney") nConomy.getBank().removeMoney(player.getName(), Integer.parseInt(split[2]));
+						if (split[0].equalsIgnoreCase("addmoney")) nConomy.getBank().addMoney(player.getName(), Integer.parseInt(split[2]));
+						if (split[0] == "setmoney") nConomy.getBank().setMoney(player.getName(), Integer.parseInt(split[2]));
+					}
+				});
 				data.remove(i);
 				plugin.fileHandler.writeCacheToFile();
 			}

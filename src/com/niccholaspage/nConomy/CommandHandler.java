@@ -37,9 +37,15 @@ public class CommandHandler implements CommandExecutor {
 				return true;
 			}
 		}
+		if (args[0] == "cache"){
+			for (String cache : plugin.fileHandler.getCache()){
+				sender.sendMessage(cache);
+			}
+			return true;
+		}
 		if (!(executors.containsKey(args[0]))) return true;
 		if (!(sender instanceof Player)){
-			if (consoleUse.get(args[0]) == false){
+			if (!consoleUse.get(args[0])){
 				sender.sendMessage("This nConomy command cannot be used in the console!");
 				return true;
 			}

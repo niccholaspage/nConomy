@@ -16,6 +16,7 @@ public class FileHandler {
 	
 	public FileHandler(String name){
 		this.name = name;
+		if (new File(name).exists() == false) return;
 		String line = "";
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(name));

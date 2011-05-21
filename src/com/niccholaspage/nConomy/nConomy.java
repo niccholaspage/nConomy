@@ -128,7 +128,7 @@ class nConomyPlayerListener extends PlayerListener {
 				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
 					public void run(){
 						if (split[0] == "removemoney") nConomy.getBank().removeMoney(player.getName(), Integer.parseInt(split[2]));
-						if (split[0].equalsIgnoreCase("addmoney")) nConomy.getBank().addMoney(player.getName(), Integer.parseInt(split[2]));
+						if (split[0] == "addmoney") nConomy.getBank().addMoney(player.getName(), Integer.parseInt(split[2]));
 						if (split[0] == "setmoney") nConomy.getBank().setMoney(player.getName(), Integer.parseInt(split[2]));
 					}
 				});
